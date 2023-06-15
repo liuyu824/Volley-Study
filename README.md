@@ -1,5 +1,3 @@
-# Volley-Study
-
 
 
 ## OKHttp
@@ -284,30 +282,124 @@ requestQueue.add(stringRequest);
 
 
 
-- 请求json数据
+<mark> Json数据请求 </mark>
 
-  创建一个请求队列
+- 创建一个请求队列
 
-  ```java
-  Volley.newRequestQueue requestQueue = Volley.newRequestQueue(VolleyActivity.this);
-  ```
+```java
+Volley.newRequestQueue requestQueue = Volley.newRequestQueue(VolleyActivity.this);
+```
 
-  创建一个请求
+- 创建一个请求
 
-  ```java
-  JsonObjectRequest request = new JsonObjectRequest();
-  ```
+```java
+String url = "https://httpbin.org/json";
+	JsonObjectRequest request = new JsonObjectRequest(
+    url,
+    response -> tv_showResult.setText(response.toString()), //正确接收数据
+    error -> tv_showResult.setText("请求失败"+error));  //错误接收数据
+```
 
-  ```java
-  https://httpbin.org/json
-  ```
+```java
+https://httpbin.org/json
+```
+
+- 将请求添加到队列中
+
+```java
+// 将创建的请求添加到请求队列中
+requestQueue.add(request);
+```
 
 
 
-1. 图片加载
-   - ImageRequest 加载图片 数据地址：httpL//img5.mtime.cn/mg/2016/10/11/160347.30270341.jpg
-   - ImageLoader 加载图片
-   - NetworkImageView 加载图片 布局：com.android.volley.toolbox.NetworkImageView
+<mark> ImageRequest 加载图片请求 </mark>
+
+- 创建一个请求队列
+
+```java
+Volley.newRequestQueue requestQueue = Volley.newRequestQueue(VolleyActivity.this);
+```
+
+- 创建一个请求
+
+```java
+ImageRequest imageRequest = new ImageRequest(
+  url, 
+  response -> {
+   iv_networkImageView.setVisibility(View.VISIBLE);
+   iv_networkImageView.setImageBitmap(response);
+   tv_showResult.setText("正确接收图片");}, 
+  100, 
+  100, 
+  Bitmap.Config.RGB_565,
+  error -> tv_showResult.setText("无法正确接收图片"+error)
+);
+```
+
+```java
+https://httpbin.org/json
+```
+
+- 将请求添加到队列中
+
+```java
+// 将创建的请求添加到请求队列中
+requestQueue.add(request);
+```
+
+
+
+<mark> ImageLoader 加载图片请求（不带缓存） </mark>
+
+- 创建请求队列
+- 创建一个请求
+
+```java
+ImageLoader imageLoader = new ImageLoader(){
+  requestQueue, new ImageLoader.ImageCache(){
+    @Nullable
+    @Override
+    public Bitmap getBitmap(String url) {
+      return null;
+    }
+    
+    @Override
+    public void putBitmap(String url, Bitmap bitmap) {
+      
+    }
+  }
+}
+
+// 加载图片
+String url = "https://httpbin.org/image";
+iv_networkImageView.setVisibility(View.VISIBLE);
+ImageLoader.ImageListener imageListener = imageLoader.getImageListener(iv_networkImageView,R.drawable.ic_launcher_background,R.drawable.ic_launcher_foreground);
+imageLoader.get(url, imageListener);
+```
+
+
+
+<mark> ImageLoader 加载图片请求（带缓存） </mark>
+
+新建一个BitmapCache工具类，复制代码，导包
+
+![截屏2023-06-15 11.19.17](/Users/liuyu/Library/Application Support/typora-user-images/截屏2023-06-15 11.19.17.png)
+
+```java
+// 替换掉原来的ImageLoader.ImageCache
+ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
+```
+
+
+
+<mark> NetworkImageView 加载图片 </mark>
+
+
+
+
+
+com.android.volley.toolbox.NetworkImageView
 
 
 
