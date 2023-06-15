@@ -1,6 +1,9 @@
 package com.example.volley;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +14,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
@@ -69,72 +74,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 统一创建一个请求序列
         requestQueue = Volley.newRequestQueue(MainActivity.this);
 
-        if (v.getId() == R.id.btn_request_get){
-
-            Log.d("onClick", "btn_request_get被点击了");
-            Toast.makeText(MainActivity.this,"requestGet",Toast.LENGTH_SHORT).show();
-            volleyGet();
-
-        } else if (v.getId() == R.id.btn_request_post) {
-
-            Log.d("onClick", "btn_request_post被点击了");
-            Toast.makeText(MainActivity.this,"requestPost",Toast.LENGTH_SHORT).show();
-            volleyPost();
-
-        } else if (v.getId() == R.id.btn_request_jsonData) {
-
-            Log.d("onClick", "btn_request_jsonData被点击了");
-            Toast.makeText(MainActivity.this,"requestJsonData",Toast.LENGTH_SHORT).show();
-            volleyGetJson();
-
-        } else if (v.getId() == R.id.btn_imageRequest) {
-
-            Log.d("onClick", "btn_imageRequest被点击了");
-            Toast.makeText(MainActivity.this,"imageRequest",Toast.LENGTH_SHORT).show();
-            volleyGet();
-
-        } else if (v.getId() == R.id.btn_imageLoader) {
-
-            Log.d("onClick", "btn_imageLoader被点击了");
-            Toast.makeText(MainActivity.this,"imageLoader",Toast.LENGTH_SHORT).show();
-            volleyGet();
-
-        } else if (v.getId() == R.id.btn_networkImageView) {
-
-            Log.d("onClick", "btn_networkImageView被点击了");
-            Toast.makeText(MainActivity.this,"networkImageView",Toast.LENGTH_SHORT).show();
-            volleyGet();
-
-        } else {
-
-            Log.d("switch_R_Id", "无按钮ID匹配");
-
-        }
+        if (v.getId() == R.id.btn_request_get){volleyGet();}
+        else if (v.getId() == R.id.btn_request_post) {volleyPost();}
+        else if (v.getId() == R.id.btn_request_jsonData) {volleyGetJson();}
+        else if (v.getId() == R.id.btn_imageRequest) {volleyImageRequest();}
+        else if (v.getId() == R.id.btn_imageLoader) {volleyImageLoader();}
+        else if (v.getId() == R.id.btn_networkImageView) {volleyNetworkImageView();}
+        else {Log.d("switch_R_Id", "无按钮ID匹配");}
     }
 
     private void volleyGet() {
+        iv_networkImageView.setVisibility(View.GONE);
         String url = "https://www.httpbin.org/get?a=1&b=2";
 
         // 创建一个get请求
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            // 正确接收数据，回调
-            @Override
-            public void onResponse(String response) {
-                tv_showResult.setText(response);
-            }
-        }, new Response.ErrorListener() {
-            // 错误接收数据，回调
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                tv_showResult.setText("加载错误");
-            }
-        });
+        // 正确接收数据，回调
+        // 错误接收数据，回调
+        StringRequest stringRequest = new StringRequest(
+                url,
+                response -> tv_showResult.setText(response),
+                error -> tv_showResult.setText("加载错误"));
 
         // 将请求添加到请求序列中
         requestQueue.add(stringRequest);
     }
 
     private void volleyPost() {
+        iv_networkImageView.setVisibility(View.GONE);
         String url = "https://httpbin.org/post";
 
         // 创建一个post请求
@@ -150,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void volleyGetJson(){
+        iv_networkImageView.setVisibility(View.GONE);
 
         // 不需要创建请求队列，已经统一创建好
         // 创建一个请求
@@ -161,5 +128,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 将创建的请求添加到请求队列中
         requestQueue.add(request);
+    }
+
+    private void volleyImageRequest(){
+        iv_networkImageView.setVisibility(View.GONE);
+        String url = "https://httpbin.org/image";
+
+        // 创建一个请求队列，已提前统一创建
+        // 创建一个请求
+        ImageRequest imageRequest = new ImageRequest(
+                url, response -> {
+                    iv_networkImageView.setVisibility(View.VISIBLE);
+                    iv_networkImageView.setImageBitmap(response);
+                    tv_showResult.setText("正确接收图片");
+                }, 100, 100, Bitmap.Config.RGB_565,
+                error -> tv_showResult.setText("无法正确接收图片"+error)
+        );
+        // 将创建的请求添加到请求队列中
+        requestQueue.add(imageRequest);
+    }
+
+    private void volleyImageLoader(){
+
+        iv_networkImageView.setVisibility(View.GONE);
+
+        // 创建一个请求队列，前面已经统一创建过了
+        // 创建一个请求
+        ImageLoader imageLoader = new ImageLoader(
+                requestQueue, new ImageLoader.ImageCache() {
+            @Nullable
+            @Override
+            public Bitmap getBitmap(String url) {
+                return null;
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+
+            }
+        });
+
+        // 加载图片
+        String url = "https://httpbin.org/image";
+        iv_networkImageView.setVisibility(View.VISIBLE);
+        ImageLoader.ImageListener imageListener = imageLoader.getImageListener(iv_networkImageView,R.drawable.ic_launcher_background,R.drawable.ic_launcher_foreground);
+        imageLoader.get(url, imageListener);
+
+    }
+
+    private void volleyNetworkImageView(){
+
+        iv_networkImageView.setVisibility(View.GONE);
+
     }
 }
