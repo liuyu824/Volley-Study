@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Volley</string>
+    <string name="request_get">get请求</string>
+    <string name="request_post">post请求</string>
+    <string name="request_jsonData">json数据请求</string>
+    <string name="imageRequest">加载图片_ImageRequest</string>
+    <string name="imageLoader">加载图片_ImageLoader</string>
+    <string name="networkImageView">加载图片_NetworkImageView</string>
+    <string name="showResult">显示结果</string>
+    <string name="noResult">无结果</string>
+</resources>
