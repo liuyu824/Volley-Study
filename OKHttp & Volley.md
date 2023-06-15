@@ -395,11 +395,12 @@ ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
 
 <mark> NetworkImageView 加载图片 </mark>
 
+```xml
+// 在xml布局文件中，使用此标签来创建ImageView
+<com.android.volley.toolbox.NetworkImageView></com.android.volley.toolbox.NetworkImageView>
+```
 
 
-
-
-com.android.volley.toolbox.NetworkImageView
 
 
 

@@ -178,7 +178,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void volleyNetworkImageView(){
 
-        iv_networkImageView.setVisibility(View.GONE);
+        // 设置【已经隐藏】的 imageView 显示
+        iv_networkImageView.setVisibility(View.VISIBLE);
 
+        // 设置网址url
+        String url = "";
+
+        // 创建一个请求队列
+        // 创建一个ImageLoader
+        ImageLoader imageLoader = new ImageLoader(requestQueue,new BitmapCache());
+
+        // 默认图片设置
+        iv_networkImageView.setDefaultImageResId(R.drawable.ic_launcher_background);
+        iv_networkImageView.setErrorImageResId(R.drawable.ic_launcher_foreground);
+
+        // 加载图片
+        iv_networkImageView.setImageUrl(url,imageLoader);
     }
 }
